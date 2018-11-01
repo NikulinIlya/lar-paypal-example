@@ -66,31 +66,53 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-                        <a href="{{ route('register') }}">Register</a>
-                    @endauth
-                </div>
-            @endif
+
 
             <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
+
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Documentation</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <div id="paypal-button"></div>
                 </div>
             </div>
         </div>
+
+        <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+        <script>
+            paypal.Button.render({
+                // Configure environment
+                env: 'sandbox',
+                client: {
+                    sandbox: 'Ae5JKxb8bakTsZsKfYmLGHvLfeMupwoTj7GREN_zmYgLuQHxRPDLNZDu_YdJX3_XuiOZxpCoTOqpEBq_', //demo_sandbox_client_id
+                    production: 'demo_production_client_id'
+                },
+                // Customize button (optional)
+                locale: 'en_US',
+                style: {
+                    size: 'large',
+                    color: 'gold',
+                    shape: 'pill',
+                },
+                // Set up a payment
+                payment: function(data, actions) {
+                    return actions.payment.create({
+                        transactions: [{
+                            amount: {
+                                total: '0.01',
+                                currency: 'USD'
+                            }
+                        }]
+                    });
+                },
+                // Execute the payment
+                onAuthorize: function(data, actions) {
+                    return actions.payment.execute().then(function() {
+                        // Show a confirmation message to the buyer
+                        window.alert('Thank you for your purchase!');
+                    });
+                }
+            }, '#paypal-button');
+
+        </script>
     </body>
 </html>
