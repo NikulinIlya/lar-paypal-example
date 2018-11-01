@@ -78,41 +78,41 @@
         </div>
 
         <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+        <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+
+        <div id="paypal-button"></div>
+
         <script>
             paypal.Button.render({
-                // Configure environment
-                env: 'sandbox',
-                client: {
-                    sandbox: 'Ae5JKxb8bakTsZsKfYmLGHvLfeMupwoTj7GREN_zmYgLuQHxRPDLNZDu_YdJX3_XuiOZxpCoTOqpEBq_', //demo_sandbox_client_id
-                    production: 'demo_production_client_id'
-                },
-                // Customize button (optional)
-                locale: 'en_US',
+                env: 'sandbox', // Or 'production'
                 style: {
                     size: 'large',
                     color: 'gold',
                     shape: 'pill',
                 },
-                // Set up a payment
+                // Set up the payment:
+                // 1. Add a payment callback
                 payment: function(data, actions) {
-                    return actions.payment.create({
-                        transactions: [{
-                            amount: {
-                                total: '0.01',
-                                currency: 'USD'
-                            }
-                        }]
-                    });
+                    // 2. Make a request to your server
+                    return actions.request.post('/api/create-payment')
+                        .then(function(res) {
+                            // 3. Return res.id from the response
+                            return res.id;
+                        });
                 },
-                // Execute the payment
+                // Execute the payment:
+                // 1. Add an onAuthorize callback
                 onAuthorize: function(data, actions) {
-                    return actions.payment.execute().then(function() {
-                        // Show a confirmation message to the buyer
-                        window.alert('Thank you for your purchase!');
-                    });
+                    // 2. Make a request to your server
+                    return actions.request.post('/api/execute-payment', {
+                        paymentID: data.paymentID,
+                        payerID:   data.payerID
+                    })
+                        .then(function(res) {
+                            // 3. Show the buyer a confirmation message.
+                        });
                 }
             }, '#paypal-button');
-
         </script>
     </body>
 </html>
