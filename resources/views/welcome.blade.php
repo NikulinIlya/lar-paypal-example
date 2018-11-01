@@ -110,6 +110,8 @@
                     })
                         .then(function(res) {
                             // 3. Show the buyer a confirmation message.
+                            console.log(res);
+                            alert('PAYMENT WENT THROUGH!')
                         });
                 }
             }, '#paypal-button');
